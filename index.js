@@ -64,11 +64,25 @@ async function run() {
       res.send(result)
     });
 
-    app.post('/details/:id', async (req, res) => {
-      const SeeDetails = req.body;
-      console.log(SeeDetails)
-      const result = await cartCollection.insertOne(SeeDetails);
+    app.post('/details', async (req, res) => {
+      const addCart = req.body;
+      console.log(addCart)
+      const result = await cartCollection.insertOne(addCart);
       res.send(result);
+    });
+
+    app.get('/details', async (req, res) => {
+      const cursor = cartCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+    app.delete('/details/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id:id };
+      const result = await cartCollection.deleteOne(query);
+      res.send(result);
+     
     })
 
 
