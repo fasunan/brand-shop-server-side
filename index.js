@@ -31,6 +31,7 @@ async function run() {
     await client.connect();
 
     const productCollection = client.db('productDB').collection('product');
+    const userCollection = client.db('productDB').collection('user');
 
 
     app.get('/product', async (req, res) => {
@@ -48,17 +49,17 @@ async function run() {
 
 
     app.get('/product/:name', async (req, res) => {
-      const name = req.params.name; 
+      const name = req.params.name;
       const query = { brandName: name.toLocaleLowerCase() };
-      const cursor =  productCollection.find(query);
+      const cursor = productCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
-      
+
     })
 
     app.post('/product', async (req, res) => {
       const allProducts = req.body;
-      
+
       const result = await productCollection.insertOne(allProducts);
       res.send(result)
     });
@@ -79,12 +80,27 @@ async function run() {
           price: updateProduct.price,
           details: updateProduct.details,
           rating: updateProduct.rating,
-          
+
         }
       }
       const result = await productCollection.updateOne(filter, product, options);
       res.send(result);
 
+    })
+
+    // user Related API
+    app.get('/user', async (req, res) => {
+      const cursor = userCollection.find();
+      const users = await cursor.toArray();
+      res.send(users);
+    })
+
+
+    app.post('/user', async (req, res) => {
+      const user = req.body;
+      console.log(user)
+      const result = await userCollection.insertOne(user);
+      res.send(result);
     })
 
     // Send a ping to confirm a successful connection
